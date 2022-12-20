@@ -1,8 +1,9 @@
 export interface Customer {
+  id: number;
   firstName: string;
   lastName: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   phoneNumber: string;
   email: string;
-  backAccountNumber: number;
+  bankAccountNumber: string;
 }

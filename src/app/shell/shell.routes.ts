@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 import { LayoutComponent } from './ui/layout.component';
 
 export const SHELL_ROUTES: Route[] = [
+  { path: '', pathMatch: 'full', redirectTo: 'customers' },
   {
     path: '',
     component: LayoutComponent,

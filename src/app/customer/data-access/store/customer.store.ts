@@ -9,12 +9,34 @@ interface CustomerState {
 @Cacheable({ storageKey: 'customers' })
 @Injectable()
 export class CustomerStore extends BaseStore<CustomerState> {
+  customers$ = this.select((state) => state.customers);
+
   constructor() {
     super({ customers: [] });
   }
 
-  setCustomers = this.updater((state, customers: Customer[]) => ({
+  addCustomer = this.updater((state, customer: Customer) => ({
     ...state,
-    customers: [...customers],
+    customers: [...state.customers, customer],
+  }));
+
+  editCustomer = this.updater((state, customerToEdit: Customer) => ({
+    ...state,
+    customers: [
+      ...state.customers.map((customer) =>
+        customer.id === customerToEdit.id
+          ? { ...customer, ...customerToEdit }
+          : customer
+      ),
+    ],
+  }));
+
+  deleteCustomer = this.updater((state, customerIdToDelete: number) => ({
+    ...state,
+    customers: [
+      ...state.customers.filter(
+        (customer) => customer.id !== customerIdToDelete
+      ),
+    ],
   }));
 }

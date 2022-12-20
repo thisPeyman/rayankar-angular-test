@@ -1,16 +1,32 @@
 import { Route } from '@angular/router';
+import { CustomerStore } from './data-access/store/customer.store';
 
 export const CUSTOMER_ROUTES: Route[] = [
   {
     path: '',
-    loadComponent: () =>
-      import('./feature/customers-list.component').then(
-        (m) => m.CustomersListComponent
-      ),
-  },
-  {
-    path: ':id',
-    loadComponent: () =>
-      import('./feature/customer.component').then((m) => m.CustomerComponent),
+    providers: [CustomerStore],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./feature/customers-list.component').then(
+            (m) => m.CustomersListComponent
+          ),
+      },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('./feature/edit-customer.component').then(
+            (m) => m.EditCustomerComponent
+          ),
+      },
+      {
+        path: 'edit/:email',
+        loadComponent: () =>
+          import('./feature/edit-customer.component').then(
+            (m) => m.EditCustomerComponent
+          ),
+      },
+    ],
   },
 ];
