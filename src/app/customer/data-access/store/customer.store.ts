@@ -38,7 +38,9 @@ export class CustomerStore extends BaseStore<CustomerState> {
         );
 
         if (duplicateCustomerByEmail)
-          this._snackBar.open('This email is already taken!');
+          this._snackBar.open('This email is already taken!', 'Ok', {
+            duration: 3000,
+          });
 
         return !duplicateCustomerByEmail;
       }),
