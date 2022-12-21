@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { Customer } from '../data-access/models/customer';
+import { phoneNumberValidator } from 'src/app/shared/utils/validators/phone-number.directive';
 
 @Component({
   selector: 'app-customer-form',
@@ -84,7 +85,7 @@ export class CustomerFormComponent {
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     dateOfBirth: ['', Validators.required],
-    phoneNumber: ['', Validators.required],
+    phoneNumber: ['', [Validators.required, phoneNumberValidator]],
     email: ['', [Validators.required, Validators.email]],
     bankAccountNumber: ['', Validators.required],
   });

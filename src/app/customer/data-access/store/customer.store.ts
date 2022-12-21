@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { filter, Observable, tap, withLatestFrom } from 'rxjs';
 import { BaseStore, Cacheable } from 'src/app/shared/data-access/base-store';
 import { Customer } from '../models/customer';
 
@@ -23,14 +25,33 @@ export class CustomerStore extends BaseStore<CustomerState> {
       customers.find((customer) => customer.id === selectedId)
   );
 
-  constructor() {
+  constructor(private _snackBar: MatSnackBar) {
     super({ customers: [], selectedCustomerId: null });
   }
 
-  addCustomer = this.updater((state, customer: Omit<Customer, 'id'>) => ({
-    ...state,
-    customers: [...state.customers, { ...customer, id: this.generateId() }],
-  }));
+  addCustomer = this.effect((trigger$: Observable<Omit<Customer, 'id'>>) => {
+    return trigger$.pipe(
+      withLatestFrom(this.customers$),
+      filter(([newCustomer, customers]) => {
+        const duplicateCustomerByEmail = customers.find(
+          (customer) => customer.email === newCustomer.email
+        );
+
+        if (duplicateCustomerByEmail)
+          this._snackBar.open('This email is already taken!');
+
+        return !duplicateCustomerByEmail;
+      }),
+      tap(([newCustomer]) => {
+        this.patchState((state) => ({
+          customers: [
+            ...state.customers,
+            { ...newCustomer, id: this.generateId() },
+          ],
+        }));
+      })
+    );
+  });
 
   editCustomer = this.updater((state, customerToEdit: Customer) => ({
     ...state,
