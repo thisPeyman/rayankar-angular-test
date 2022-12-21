@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { LetModule } from '@ngrx/component';
 import { CustomerFormComponent } from '../ui/customer-form.component';
 import { Customer } from '../data-access/models/customer';
+import { CustomerStore } from '../data-access/store/customer.store';
 
 @Component({
   selector: 'app-edit-customer',
@@ -23,9 +24,14 @@ export class EditCustomerComponent {
     map((v) => v[0].path === 'edit')
   );
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private customerStore: CustomerStore,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
-  confirm(customer: Omit<Customer, 'id'>) {
-    console.log(customer);
+  confirm(newCustomer: Omit<Customer, 'id'>) {
+    this.customerStore.addCustomer(newCustomer);
+    this.router.navigateByUrl('/customers');
   }
 }

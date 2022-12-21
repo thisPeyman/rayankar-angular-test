@@ -4,6 +4,7 @@ import { Customer } from '../models/customer';
 
 interface CustomerState {
   customers: Customer[];
+  selectedCustomerId: string | null;
 }
 
 @Cacheable({ storageKey: 'customers' })
@@ -11,13 +12,18 @@ interface CustomerState {
 export class CustomerStore extends BaseStore<CustomerState> {
   customers$ = this.select((state) => state.customers);
 
+  private selectedCustomerId$ = this.select(
+    (state) => state.selectedCustomerId
+  );
+  // selectedCustomer = this.select(this.customers$, this.selectedCustomerId$);
+
   constructor() {
-    super({ customers: [] });
+    super({ customers: [], selectedCustomerId: null });
   }
 
-  addCustomer = this.updater((state, customer: Customer) => ({
+  addCustomer = this.updater((state, customer: Omit<Customer, 'id'>) => ({
     ...state,
-    customers: [...state.customers, customer],
+    customers: [...state.customers, { ...customer, id: this.generateId() }],
   }));
 
   editCustomer = this.updater((state, customerToEdit: Customer) => ({
@@ -31,7 +37,7 @@ export class CustomerStore extends BaseStore<CustomerState> {
     ],
   }));
 
-  deleteCustomer = this.updater((state, customerIdToDelete: number) => ({
+  deleteCustomerById = this.updater((state, customerIdToDelete: string) => ({
     ...state,
     customers: [
       ...state.customers.filter(
@@ -39,4 +45,8 @@ export class CustomerStore extends BaseStore<CustomerState> {
       ),
     ],
   }));
+
+  private generateId(): string {
+    return Math.random().toString(36).slice(2, 7);
+  }
 }
