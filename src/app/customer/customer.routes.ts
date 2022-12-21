@@ -21,7 +21,7 @@ export const CUSTOMER_ROUTES: Route[] = [
           ),
       },
       {
-        path: 'edit/:email',
+        path: 'edit/:id',
         loadComponent: () =>
           import('./feature/edit-customer.component').then(
             (m) => m.EditCustomerComponent

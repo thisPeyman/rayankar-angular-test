@@ -15,7 +15,13 @@ export class CustomerStore extends BaseStore<CustomerState> {
   private selectedCustomerId$ = this.select(
     (state) => state.selectedCustomerId
   );
-  // selectedCustomer = this.select(this.customers$, this.selectedCustomerId$);
+
+  selectedCustomer$ = this.select(
+    this.customers$,
+    this.selectedCustomerId$,
+    (customers, selectedId) =>
+      customers.find((customer) => customer.id === selectedId)
+  );
 
   constructor() {
     super({ customers: [], selectedCustomerId: null });

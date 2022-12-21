@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -9,6 +10,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
+import { Customer } from '../data-access/models/customer';
 
 @Component({
   selector: 'app-customer-form',
@@ -88,6 +90,10 @@ export class CustomerFormComponent {
   });
 
   @Output() confirm = new EventEmitter();
+
+  @Input() set formValue(value: Customer | undefined) {
+    this.form.patchValue({ ...value });
+  }
 
   constructor(private fb: FormBuilder) {}
 
