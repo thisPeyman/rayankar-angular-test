@@ -1,22 +1,33 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { CustomerStore } from '../data-access/store/customer.store';
 
 import { EditCustomerComponent } from './edit-customer.component';
 
-xdescribe('EditCustomerComponent', () => {
+describe('EditCustomerComponent', () => {
   let component: EditCustomerComponent;
-  let fixture: ComponentFixture<EditCustomerComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [EditCustomerComponent],
-    }).compileComponents();
+    TestBed.configureTestingModule({
+      providers: [
+        EditCustomerComponent,
+        CustomerStore,
+        { provide: ActivatedRoute, useValue: activatedRouteStub },
+      ],
+      imports: [MatSnackBarModule],
+    });
 
-    fixture = TestBed.createComponent(EditCustomerComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = TestBed.inject(EditCustomerComponent);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
+
+const activatedRouteStub = {
+  url: of(null),
+  params: of(null),
+};
