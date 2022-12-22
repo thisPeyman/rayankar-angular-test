@@ -72,6 +72,7 @@ import { phoneNumberValidator } from 'src/app/shared/utils/validators/phone-numb
         color="primary"
         class="col-span-full w-1/2 mx-auto"
         type="submit"
+        data-test="submit-button"
       >
         Submit
       </button>
@@ -92,7 +93,7 @@ export class CustomerFormComponent {
 
   @Output() confirm = new EventEmitter();
 
-  @Input() set formValue(value: Customer | undefined) {
+  @Input() set formValue(value: Partial<Customer> | undefined) {
     this.form.patchValue({ ...value });
   }
 
