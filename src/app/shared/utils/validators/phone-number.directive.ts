@@ -1,11 +1,18 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { PhoneNumberUtil } from 'google-libphonenumber';
 
 export const phoneNumberValidator = (
   control: AbstractControl
 ): ValidationErrors | null => {
-  const phoneNumberRegex = RegExp(
-    '^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$'
-  );
-  const passesTest = phoneNumberRegex.test(control.value);
-  return passesTest ? null : { invalidPhoneNumber: true };
+  const phoneNumberUtil = PhoneNumberUtil.getInstance();
+
+  let passesTest = false;
+
+  try {
+    passesTest = phoneNumberUtil.isValidNumber(
+      phoneNumberUtil.parse(control.value)
+    );
+  } finally {
+    return passesTest ? null : { invalidPhoneNumber: true };
+  }
 };
