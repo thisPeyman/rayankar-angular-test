@@ -55,34 +55,11 @@ const fakeCustomer2 = {
 };
 
 const addOrEditCustomer = (customer: typeof fakeCustomer1) => {
-  cy.get('[formcontrolname="firstName"]')
-    .clear({ force: true })
-    .type(customer.firstName, {
+  for (const [key, value] of Object.entries(customer)) {
+    cy.get(`[formcontrolname="${key}"]`).clear({ force: true }).type(value, {
       force: true,
     });
-  cy.get('[formcontrolname="lastName"]')
-    .clear({ force: true })
-    .type(customer.lastName, {
-      force: true,
-    });
-  cy.get('[formcontrolname="dateOfBirth"]')
-    .clear({ force: true })
-    .type(customer.dateOfBirth, {
-      force: true,
-    });
-  cy.get('[formcontrolname="phoneNumber"]')
-    .clear({ force: true })
-    .type(customer.phoneNumber, {
-      force: true,
-    });
-  cy.get('[formcontrolname="email"]')
-    .clear({ force: true })
-    .type(customer.email, {
-      force: true,
-    });
-  cy.get('[formcontrolname="bankAccountNumber"]')
-    .clear({ force: true })
-    .type(customer.bankAccountNumber, { force: true });
+  }
 
   cy.contains('Submit').click();
 };
