@@ -58,10 +58,6 @@ describe('CustomerFormComponent', () => {
     component.form.patchValue({ phoneNumber: '+989302104598' });
 
     expect(component.form.controls.phoneNumber.valid).toBeTrue();
-
-    component.form.patchValue({ phoneNumber: '09302104598' });
-
-    expect(component.form.controls.phoneNumber.valid).toBeTrue();
   });
 
   it('should patch value from parent through @Input', () => {
@@ -85,7 +81,7 @@ describe('CustomerFormComponent', () => {
       email: 'this@gmail.com',
       firstName: 'Peyman',
       lastName: 'Khosravi',
-      phoneNumber: '09362507047',
+      phoneNumber: '+989362507047',
     };
 
     component.form.setValue(formValue);
