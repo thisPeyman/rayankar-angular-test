@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { filter, Observable, tap, withLatestFrom } from 'rxjs';
+import { filter, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
 import { BaseStore, Cacheable } from 'src/app/shared/data-access/base-store';
+import { UiService } from 'src/app/shared/data-access/services/ui.service';
 import { Customer } from '../models/customer';
+import { CustomerApiService } from '../services/customer-api.service';
 
 interface CustomerState {
   customers: Customer[];
@@ -25,31 +26,28 @@ export class CustomerStore extends BaseStore<CustomerState> {
       customers.find((customer) => customer.id === selectedId)
   );
 
-  constructor(private _snackBar: MatSnackBar) {
+  constructor(
+    private uiService: UiService,
+    private customerApiService: CustomerApiService
+  ) {
     super({ customers: [], selectedCustomerId: null });
   }
 
   addCustomer = this.effect((trigger$: Observable<Omit<Customer, 'id'>>) => {
     return trigger$.pipe(
       withLatestFrom(this.customers$),
-      filter(([newCustomer, customers]) => {
-        const duplicateCustomerByEmail = customers.find(
-          (customer) => customer.email === newCustomer.email
-        );
+      switchMap(([newCustomer, customers]) =>
+        this.customerApiService.addCustomer(newCustomer, customers)
+      ),
+      filter((newCustomer) => {
+        if (!newCustomer.success)
+          this.uiService.notifyError(newCustomer.errorCode!);
 
-        if (duplicateCustomerByEmail)
-          this._snackBar.open('This email is already taken!', 'Ok', {
-            duration: 3000,
-          });
-
-        return !duplicateCustomerByEmail;
+        return !!newCustomer.success;
       }),
-      tap(([newCustomer]) => {
+      tap(({ dataSuccess }) => {
         this.patchState((state) => ({
-          customers: [
-            ...state.customers,
-            { ...newCustomer, id: this.generateId() },
-          ],
+          customers: [...state.customers, { ...dataSuccess! }],
         }));
       })
     );
@@ -74,8 +72,4 @@ export class CustomerStore extends BaseStore<CustomerState> {
       ),
     ],
   }));
-
-  private generateId(): string {
-    return Math.random().toString(36).slice(2, 7);
-  }
 }
